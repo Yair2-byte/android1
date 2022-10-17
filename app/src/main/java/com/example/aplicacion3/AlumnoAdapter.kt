@@ -11,11 +11,10 @@ import com.bumptech.glide.Glide
 
 class AlumnoAdapter (private val context: Context, val listAlumno: List <Alumno>) : RecyclerView.Adapter<AlumnoAdapter.ViewHolder>() {
 
-    class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
-        val imagenAlumno: ImageView = itemView.findViewById(R.id.imgAlumno)
-        val txtNombre: TextView = itemView.findViewById(R.id.nombre)
-        val txtCuenta: TextView = itemView.findViewById(R.id.cuenta)
+    private var clickListener: ClickListener? = null
 
+    interface ClickListener {
+            fun onItemClick(view: View, position: Int)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -38,4 +37,27 @@ class AlumnoAdapter (private val context: Context, val listAlumno: List <Alumno>
     override fun getItemCount(): Int {
         return listAlumno.size
     }
+
+    fun setOnItemClickListener(clickListener: ClickListener){
+        this.clickListener = clickListener
+    }
+
+    inner class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView), View.OnClickListener {
+        val imagenAlumno: ImageView = itemView.findViewById(R.id.imgAlumno)
+        val txtNombre: TextView = itemView.findViewById(R.id.nombre)
+        val txtCuenta: TextView = itemView.findViewById(R.id.cuenta)
+
+        init {
+            if (clickListener != null){
+                itemView.setOnClickListener(this)
+            }
+        }
+            override fun onClick(itView: View){
+                if(itView != null){
+                  clickListener?.onItemClick(itView, bindingAdapterPosition)
+                }
+            }
+    }
 }
+
+
